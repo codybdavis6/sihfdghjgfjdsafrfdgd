@@ -1,7 +1,7 @@
 function isSuspiciousFingerprint() {
-  // Adjusted logic to avoid false positives
+ 
   const offset = new Date().getTimezoneOffset();
-  if (offset === 0 || offset === 60 || offset === -60) return false; // Allow UTC, UTC+1, UTC-1
+  if (offset === 0 || offset === 60 || offset === -60) return false;
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");

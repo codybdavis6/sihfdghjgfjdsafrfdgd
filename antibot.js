@@ -1,4 +1,3 @@
-<script>
   async function checkBotAndReveal() {
     const ua = navigator.userAgent || "";
     const ref = document.referrer || "";
@@ -43,4 +42,3 @@
   }
 
   setTimeout(checkBotAndReveal, 2500);
-</script>
